@@ -1,12 +1,13 @@
 <?php
 namespace kitbs;
+
 class SlimBasicAuth extends \Slim\Middleware
 {
     /**
      * @var string
      */
     protected $realm;
- 
+
     /**
      * Constructor
      *
@@ -16,7 +17,7 @@ class SlimBasicAuth extends \Slim\Middleware
     {
         $this->realm = $realm;
     }
- 
+
     /**
      * Deny Access
      *
@@ -24,9 +25,9 @@ class SlimBasicAuth extends \Slim\Middleware
     public function deny_access() {
         $res = $this->app->response();
         $res->status(401);
-        $res->header('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));       
+        $res->header('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
     }
- 
+
     /**
      * Authenticate
      *
@@ -37,16 +38,25 @@ class SlimBasicAuth extends \Slim\Middleware
     public function authenticate($username, $password) {
         if(!ctype_alnum($username))
             return false;
-         
+
         if(isset($username) && isset($password)) {
-            $password = crypt($password);
-            // Check database here with $username and $password
-            return true;
+
+            $password = md5($password);
+
+            //Uses Idiorm
+            $user = \ORM::for_table('uom_users')
+            ->select('id')
+            ->where('username', $username)
+            ->where('password', $password)
+            ->find_one();
+
+            return $user;
+
         }
         else
             return false;
     }
- 
+
     /**
      * Call
      *
@@ -60,7 +70,7 @@ class SlimBasicAuth extends \Slim\Middleware
         $res = $this->app->response();
         $authUser = $req->headers('PHP_AUTH_USER');
         $authPass = $req->headers('PHP_AUTH_PW');
-         
+
         if ($this->authenticate($authUser, $authPass)) {
             $this->next->call();
         } else {
