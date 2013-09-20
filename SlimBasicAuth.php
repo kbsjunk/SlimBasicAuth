@@ -1,5 +1,5 @@
 <?php
- 
+namespace kitbs;
 class SlimBasicAuth extends \Slim\Middleware
 {
     /**
