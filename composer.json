@@ -3,7 +3,8 @@
     "type": "library",
     "description": "Slim framework basic HTTP auth functionality from http://www.9bitstudios.com/2013/06/basic-http-authentication-with-the-slim-php-framework-rest-api/",
     "require": {
-        "slim/slim": ">=2.0.0"
+        "slim/slim": ">=2.0.0",
+        "j4mie/idiorm": "dev-master"
     },
     "autoload": {
         "classmap": ["SlimBasicAuth.php"]
